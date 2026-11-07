@@ -3,32 +3,100 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="An index of the files in the HVLS Fan Efficiency project.">
-  <title>HVLS Fan Efficiency — Project Files</title>
+  <meta name="description" content="Explore the HVLS Fan Efficiency calculator, project documentation, and license.">
+  <meta name="theme-color" content="#10251f">
+  <title>HVLS Fan Efficiency — Project Guide</title>
   <style>
-    :root { color-scheme: light; font-family: system-ui, sans-serif; color: #232135; background: #f6f5fb; }
-    body { max-width: 760px; margin: 0 auto; padding: 48px 20px; line-height: 1.6; }
-    h1 { color: #5636cc; }
-    .card { background: white; border: 1px solid #e4e2f2; border-radius: 12px; padding: 24px; margin: 20px 0; }
-    a { color: #5636cc; }
-    li { margin: 10px 0; }
+    :root {
+      color-scheme: light;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #172923;
+      background: #f5f7f3;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      --green: #176b4b;
+      --muted: #596961;
+      --line: #dce5de;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; line-height: 1.65; }
+    a { color: var(--green); }
+    a:focus-visible { outline: 3px solid #e6a93c; outline-offset: 3px; border-radius: 4px; }
+    .hero {
+      color: #f4fbf6;
+      background: radial-gradient(ellipse at 85% 15%, #347357 0, transparent 38%), linear-gradient(135deg, #10251f, #1a4935);
+      padding: 64px 24px 58px;
+    }
+    .hero-inner, main, footer { width: min(100% - 40px, 980px); margin-inline: auto; }
+    .eyebrow { color: #b7d8c3; font-size: .78rem; font-weight: 750; letter-spacing: .14em; text-transform: uppercase; }
+    h1 { max-width: 720px; margin: 10px 0 12px; font-size: clamp(2.4rem, 6vw, 4.2rem); line-height: 1.08; letter-spacing: -.045em; }
+    .hero p { max-width: 680px; margin: 0; color: #d8e9df; font-size: 1.1rem; }
+    .hero-link { display: inline-block; margin-top: 25px; padding: 10px 17px; border-radius: 8px; background: #e8f4eb; color: #173c2b; font-weight: 750; text-decoration: none; }
+    main { padding: 38px 0 48px; }
+    .intro { max-width: 720px; margin: 0 0 27px; color: var(--muted); }
+    .section-heading { margin: 0 0 14px; font-size: 1.35rem; letter-spacing: -.02em; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr)); gap: 16px; }
+    .card { display: flex; flex-direction: column; min-height: 215px; padding: 22px; background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 5px 18px rgb(22 51 35 / 4%); }
+    .tag { align-self: flex-start; padding: 3px 9px; border-radius: 999px; background: #eaf3ec; color: #285d42; font-size: .75rem; font-weight: 750; }
+    .card h3 { margin: 13px 0 5px; font-size: 1.1rem; }
+    .card p { flex: 1; margin: 0 0 16px; color: var(--muted); font-size: .94rem; }
+    .card-link { font-weight: 750; text-decoration: none; }
+    .card-link:hover { text-decoration: underline; }
+    .note { margin-top: 25px; padding: 17px 19px; border-left: 4px solid #75a988; border-radius: 5px; background: #eaf2eb; color: #344d3e; }
+    footer { padding: 0 0 30px; color: var(--muted); font-size: .88rem; }
+    @media (prefers-reduced-motion: no-preference) { .card { transition: transform .18s ease, box-shadow .18s ease; } .card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgb(22 51 35 / 9%); } }
   </style>
 </head>
 <body>
-  <header>
-    <h1>HVLS Fan Efficiency</h1>
-    <p>A quick check of whether a manufacturer’s stated fan diameter, electrical power, and airflow appear plausible.</p>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Project guide</div>
+      <h1>HVLS Fan Efficiency</h1>
+      <p>A practical starting point for evaluating whether a high-volume, low-speed fan’s stated size, power, and airflow appear plausible.</p>
+      <a class="hero-link" href="Fan%20Wire-to-Air%20Efficiency.html">Open the calculator <span aria-hidden="true">→</span></a>
+    </div>
   </header>
   <main>
-    <section class="card" aria-labelledby="files-heading">
-      <h2 id="files-heading">Files in this project</h2>
-      <ul>
-        <li><a href="Fan%20Wire-to-Air%20Efficiency.html">Fan Wire-to-Air Efficiency calculator</a> — enter fan specifications to estimate wire-to-air efficiency.</li>
-        <li><a href="README.md">README</a> — background and purpose of the project.</li>
-        <li><a href="LICENSE">License</a> — terms for using and sharing this project.</li>
-        <li><a href="INDEX.htlm">Project index</a> — this page.</li>
-      </ul>
+    <p class="intro">Use the calculator for a quick estimate, then consult the project notes and license for context on the tool and its reuse.</p>
+
+    <section aria-labelledby="tools-heading">
+      <h2 class="section-heading" id="tools-heading">Tool</h2>
+      <div class="grid">
+        <article class="card">
+          <span class="tag">Calculator</span>
+          <h3>Fan Wire-to-Air Efficiency</h3>
+          <p>Enter fan specifications to estimate wire-to-air efficiency and make a preliminary plausibility check against the stated airflow and electrical input.</p>
+          <a class="card-link" href="Fan%20Wire-to-Air%20Efficiency.html">Launch calculator <span aria-hidden="true">→</span></a>
+        </article>
+      </div>
     </section>
+
+    <section aria-labelledby="docs-heading" style="margin-top: 30px">
+      <h2 class="section-heading" id="docs-heading">Documentation &amp; project information</h2>
+      <div class="grid">
+        <article class="card">
+          <span class="tag">Documentation</span>
+          <h3>README</h3>
+          <p>Read the project overview, its motivation, and the intended use of the efficiency check.</p>
+          <a class="card-link" href="README.md">Read the README <span aria-hidden="true">→</span></a>
+        </article>
+        <article class="card">
+          <span class="tag">Legal</span>
+          <h3>License</h3>
+          <p>Review the terms that apply when using, modifying, or distributing this project.</p>
+          <a class="card-link" href="LICENSE">View the license <span aria-hidden="true">→</span></a>
+        </article>
+        <article class="card">
+          <span class="tag">Index</span>
+          <h3>Project guide</h3>
+          <p>You are here: this page groups the repository’s main tool and supporting files by purpose.</p>
+          <a class="card-link" href="INDEX.htlm" aria-current="page">Current page <span aria-hidden="true">↗</span></a>
+        </article>
+      </div>
+    </section>
+
+    <aside class="note"><strong>Note:</strong> Treat calculator results as an estimate and an initial check, not as a substitute for verified manufacturer data or a full engineering assessment.</aside>
   </main>
+  <footer>HVLS Fan Efficiency · Project file index</footer>
 </body>
 </html>
