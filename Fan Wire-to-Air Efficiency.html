@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fan Wire-to-Air Efficiency</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", system-ui, sans-serif;
+    background: #f6f5fb; color: #232135;
+    padding: 24px 16px 40px; line-height: 1.5;
+  }
+  .wrap { max-width: 620px; margin: 0 auto; }
+  h1 { text-align: center; font-size: 1.4rem; color: #5636cc; margin-bottom: 4px; }
+  .sub { text-align: center; color: #6b6a85; font-size: 0.9rem; margin-bottom: 6px; }
+  .purpose {
+    text-align: center; color: #6b6a85; font-size: 0.85rem;
+    max-width: 480px; margin: 0 auto 24px;
+    font-style: italic;
+  }
+  .card {
+    background: #fff; border: 1px solid #e4e2f2; border-radius: 14px;
+    padding: 22px; margin-bottom: 20px;
+  }
+  .field { margin-bottom: 16px; }
+  label { display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px; }
+  .row { display: flex; gap: 8px; }
+  input[type="number"] {
+    flex: 1; width: 100%; padding: 10px 12px; font-size: 1rem;
+    border: 1px solid #e4e2f2; border-radius: 8px; outline: none;
+  }
+  input:focus { border-color: #6d4aff; }
+  .seg-group { display: inline-flex; border: 1px solid #e4e2f2; border-radius: 8px; overflow: hidden; }
+  .seg-group button {
+    border: none; background: #fff; padding: 10px 16px; font-size: 0.9rem;
+    cursor: pointer; color: #6b6a85; font-weight: 600;
+  }
+  .seg-group button.active { background: #6d4aff; color: #fff; }
+  select {
+    padding: 10px; font-size: 0.9rem; border: 1px solid #e4e2f2;
+    border-radius: 8px; background: #fff; cursor: pointer;
+  }
+  .result-num {
+    font-size: 3rem; font-weight: 800; text-align: center;
+    color: #5636cc; margin: 4px 0 2px;
+  }
+  .result-num .pct { font-size: 1.4rem; color: #6b6a85; font-weight: 600; }
+  .detail { text-align: center; color: #6b6a85; font-size: 0.88rem; margin-bottom: 18px; }
+  /* Bar chart */
+  .bar-wrap { position: relative; height: 46px; border-radius: 10px; overflow: hidden; border: 1px solid #e4e2f2; }
+  .zones { position: absolute; inset: 0; display: flex; }
+  .zone-red    { width: 31.25%; background: #f6d5d5; }
+  .zone-orange { width: 31.25%; background: #fbe7cd; }
+  .zone-yellow { width: 18.75%; background: #fdf3cf; }
+  .zone-grey   { width: 18.75%; background: #e8e6f0; }
+  .fill-solid { position: absolute; left: 0; top: 0; bottom: 0; z-index: 2; opacity: 0.95; transition: width .3s ease; }
+  .ticks { display: flex; margin-top: 6px; font-size: 0.78rem; color: #6b6a85; }
+  .ticks span { width: 31.25%; }
+  .legend { margin-top: 14px; font-size: 0.85rem; }
+  .legend div { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+  .dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+  .verdict { text-align: center; font-weight: 700; font-size: 1rem; margin-top: 12px; }
+  .note { font-size: 0.78rem; color: #6b6a85; margin-top: 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Fan Wire-to-Air Efficiency</h1>
+  <p class="sub">Efficiency = (Q × P&#832t;) / Electrical Input Power × 100, where P&#832t; = ½ ρ v² and v = Q / A</p>
+  <p class="purpose">
+    Use this tool to sanity-check whether a manufacturer's stated performance figures
+    (diameter, power, airflow) for their HVLS fan are plausible — or too good to be true.
+  </p>
+
+  <div class="card">
+    <div class="field">
+      <label>Fan diameter</label>
+      <div class="row">
+        <input type="number" id="diameter" min="0" step="any" placeholder="e.g. 24">
+        <div class="seg-group">
+          <button type="button" id="dia-m" onclick="setDiaUnit('m')">m</button>
+          <button type="button" id="dia-ft" class="active" onclick="setDiaUnit('ft')">feet</button>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Electrical input power</label>
+      <div class="row">
+        <input type="number" id="power" min="0" step="any" placeholder="e.g. 1500">
+        <select id="powerUnit">
+          <option value="W">W</option>
+          <option value="kW">kW</option>
+        </select>
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:0;">
+      <label>Airflow (Q)</label>
+      <div class="row">
+        <input type="number" id="airflow" min="0" step="any" placeholder="e.g. 310000">
+        <select id="airflowUnit">
+          <option value="cfm">CFM</option>
+          <option value="m3s">m³/s</option>
+          <option value="m3h">m³/h</option>
+          <option value="m3min">m³/min</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="result-num"><span id="effNum">—</span> <span class="pct">%</span></div>
+    <div class="detail" id="detail">Air Power = — W · Input Power = — W</div>
+
+    <div class="bar-wrap">
+      <div class="zones">
+        <div class="zone-red"></div><div class="zone-orange"></div>
+        <div class="zone-yellow"></div><div class="zone-grey"></div>
+      </div>
+      <div class="fill-solid" id="fill" style="width:0;background:#999;"></div>
+    </div>
+    <div class="ticks"><span>0</span><span>25</span><span>50</span><span>65</span><span style="width:12.5%;">80</span></div>
+
+    <div class="legend">
+      <div><div class="dot" style="background:#e05252;"></div>&lt; 25 % — Poor</div>
+      <div><div class="dot" style="background:#eb9c3f;"></div>25 – 50 % — Plausible</div>
+      <div><div class="dot" style="background:#e8c93f;"></div>50 – 65 % — Maybe plausible</div>
+      <div><div class="dot" style="background:#8a85a8;"></div>&gt; 65 % — Unlikely</div>
+    </div>
+    <div class="verdict" id="verdict">Enter diameter, power and airflow.</div>
+
+    <p class="note">
+      Total pressure is estimated from the area A = π·(d/2)²: average velocity v = Q/A,
+      then P&#832t; = ½ ρ v² with standard air density ρ = 1.2 kg/m³. This is a simplified
+      engineering estimate, not a laboratory measurement.
+    </p>
+  </div>
+
+</div>
+
+<script>
+  const M3S_PER_CFM = 0.0004719474432;
+  const FT_TO_M = 0.3048;
+  const RHO = 1.2; // standard air density kg/m³
+
+  let diaUnit = 'ft';
+
+  function setDiaUnit(u) {
+    const el = document.getElementById('diameter');
+    const v = parseFloat(el.value);
+    if (!isNaN(v) && v > 0) {
+      el.value = (u === 'ft') ? (v / FT_TO_M) : (v * FT_TO_M);
+    }
+    diaUnit = u;
+    document.getElementById('dia-m').classList.toggle('active', u === 'm');
+    document.getElementById('dia-ft').classList.toggle('active', u === 'ft');
+    calc();
+  }
+
+  function num(id) {
+    const v = parseFloat(document.getElementById(id).value);
+    return (isNaN(v) || v < 0) ? NaN : v;
+  }
+
+  function toM3s(q) {
+    switch (document.getElementById('airflowUnit').value) {
+      case 'm3s':   return q;
+      case 'cfm':   return q * M3S_PER_CFM;
+      case 'm3h':   return q / 3600;
+      case 'm3min': return q / 60;
+    }
+  }
+
+  function fmt(x, dec) {
+    if (!isFinite(x)) return '—';
+    return x.toLocaleString('en-US', { maximumFractionDigits: dec });
+  }
+
+  function calc() {
+    const dRaw = num('diameter'), wRaw = num('power'), qRaw = num('airflow');
+    const fill = document.getElementById('fill');
+    const verdict = document.getElementById('verdict');
+
+    if (isNaN(dRaw) || isNaN(wRaw) || isNaN(qRaw)) {
+      document.getElementById('effNum').textContent = '—';
+      document.getElementById('detail').innerHTML = 'Air Power = — W &nbsp;·&nbsp; Input Power = — W';
+      fill.style.width = '0';
+      verdict.textContent = 'Enter diameter, power and airflow.';
+      return;
+    }
+
+    const d = (diaUnit === 'ft') ? dRaw * FT_TO_M : dRaw;
+    const W = (document.getElementById('powerUnit').value === 'kW') ? wRaw * 1000 : wRaw;
+    const Q = toM3s(qRaw);
+
+    const A = Math.PI * Math.pow(d / 2, 2); // m²
+    const v = Q / A;                        // m/s
+    const Pt = 0.5 * RHO * v * v;           // Pa
+    const airPower = Q * Pt;                // W
+    const eff = (airPower / W) * 100;       // %
+
+    document.getElementById('effNum').textContent = fmt(eff, 1);
+    document.getElementById('detail').innerHTML =
+      'Air Power = ' + fmt(airPower, 0) + ' W &nbsp;·&nbsp; Input Power = ' + fmt(W, 0) +
+      ' W &nbsp;·&nbsp; est. P&#832t; = ' + fmt(Pt, 1) + ' Pa';
+
+    // scale: 0 – 80 %
+    const pos = Math.min(Math.max(eff / 80, 0), 1) * 100;
+    fill.style.width = pos + '%';
+
+    let color, label;
+    if (eff < 25)       { color = '#e05252'; label = 'Poor (< 25 %)'; }
+    else if (eff < 50)  { color = '#eb9c3f'; label = 'Plausible (25 – 50 %)'; }
+    else if (eff <= 65) { color = '#e8c93f'; label = 'Maybe plausible (50 – 65 %)'; }
+    else                { color = '#8a85a8'; label = 'Unlikely (> 65 %)'; }
+
+    fill.style.background = color;
+    verdict.textContent = label;
+    verdict.style.color = color;
+  }
+
+  ['diameter','power','airflow'].forEach(id =>
+    document.getElementById(id).addEventListener('input', calc));
+  ['powerUnit','airflowUnit'].forEach(id =>
+    document.getElementById(id).addEventListener('change', calc));
+
+  calc();
+</script>
+</body>
+</html>
