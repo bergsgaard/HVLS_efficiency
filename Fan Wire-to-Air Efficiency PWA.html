@@ -131,8 +131,9 @@
 
     <div class="bar-wrap">
       <div class="zones">
-        <div class="zone-red"></div><div class="zone-orange"></div>
+        <div class="zone-orange"></div><div class="zone-green"></div>
         <div class="zone-yellow"></div><div class="zone-grey"></div>
+        <div class="zone-red"></div>
       </div>
       <div class="fill-solid" id="fill" style="width:0;background:#999;"></div>
     </div>
@@ -238,7 +239,7 @@
     if (eff < 25)       { color = '#f37907'; label = 'Poor (< 25 %)'; }
     else if (eff < 40)  { color = '#5aee04'; label = 'Likely (25 – 40 %)'; }
     else if (eff <= 50) { color = '#f8e005'; label = 'Maybe plausible (40 – 50 %)'; }
-    else if (eff <= 99) { color = '#808080'; label = 'Unlikely (40 – 50 %)'; }
+    else if (eff <= 99) { color = '#808080'; label = 'Unlikely (50 – 99 %)'; }
     else                { color = '#f34703'; label = 'Impossible (> 99 %)'; }
     
     fill.style.background = color;
